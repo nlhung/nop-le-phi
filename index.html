@@ -223,12 +223,12 @@
                 statusArea.innerHTML = `
                     <div class="status-box success">
                         <h3>✅ HOÀN TẤT</h3>
-                        <p>Thí sinh đã hoàn thành nghĩa vụ đóng phí.</p>
+                        <p>Thí sinh đã nộp đủ lệ phí.</p>
                     </div>
                 `;
             } else {
                 // Thiếu tiền
-                const qrLink = `https://img.vietqr.io/image/${TEN_NGAN_HANG}-${STK_NGAN_HANG}-compact.png?amount=${conThieu}&addInfo=${code}`;
+                const qrLink = `https://api.vietqr.io/image/${TEN_NGAN_HANG}-${STK_NGAN_HANG}-vTPpigL.jpg?amount=${conThieu}&addInfo=${code}`;
 
                 statusArea.innerHTML = `
                     <div class="status-box pending">
