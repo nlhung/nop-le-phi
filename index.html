@@ -97,7 +97,7 @@
         <h2>🏛️ NỘP LỆ PHÍ THI TỰ ĐỘNG</h2>
         
 		<p style="text-align: left">
-			<i>- Học viên vui lòng chọn <u>ngày thi</u> và nhập <u>số căn cước</u>.<br>
+			<i>- Học viên vui lòng chọn <u>ngày thi</u> và nhập <u>số báo danh</u>.<br>
 			- Sau đó nhấn <u>kiểm tra</u> để kiểm tra lệ phí thi.</i>
 		</p>
 		
@@ -108,8 +108,8 @@
             <option value="2025-11-30">Ngày 30/11/2025</option>
         </select>
 
-        <label>Số CCCD / CMND:</label>
-        <input type="number" id="cccd" placeholder="Nhập số căn cước">
+        <label>Số báo danh:</label>
+        <input type="number" id="sbd" placeholder="Nhập số báo danh">
 
         <button onclick="traCuu()" id="btnSearch">🔍 Kiểm Tra</button>
     </div>
@@ -121,9 +121,10 @@
                 <span class="close-btn" onclick="dongModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="info-row"><span>Họ tên:</span> <span class="highlight" id="resName">...</span></div>
-                <div class="info-row"><span>SBD:</span> <span class="highlight" id="resSBD">...</span></div>
-                <div class="info-row"><span>Ngày thi:</span> <span class="highlight" id="resDate">...</span></div>
+				<div class="info-row"><span>Ngày thi:</span> <span class="highlight" id="resDate">...</span></div>
+				<div class="info-row"><span>SBD:</span> <span class="highlight" id="resSBD">...</span></div>
+				<div class="info-row"><span>Họ tên:</span> <span class="highlight" id="resName">...</span></div>
+				<div class="info-row"><span>Ngày sinh:</span> <span class="highlight" id="resBoD">...</span></div>
                 <div class="info-row"><span>Tổng lệ phí:</span> <span class="highlight" id="resTotal">...</span></div>
                 <div class="info-row"><span>Đã đóng:</span> <span class="highlight" style="color:green" id="resPaid">...</span></div>
 
@@ -167,13 +168,13 @@
 
         async function traCuu() {
             const ngayThi = document.getElementById('ngayThi').value;
-            const cccd = document.getElementById('cccd').value.trim();
+            const sbd = document.getElementById('sbd').value.trim().replace(/^0+/, '');
+			//const sbd = document.getElementById('sbd').value.trim().padStart(5,"0");
+
             const btn = document.getElementById('btnSearch');
 
-            if(!ngayThi || !cccd) return alert("Vui lòng nhập đủ thông tin!");
+            if(!ngayThi || !sbd) return alert("Vui lòng nhập đủ thông tin!");
 			
-			if(!isVaildCCCD(cccd)) return alert("Vui lòng nhập đúng số căn cước!");
-
             btn.innerText = "Đang tìm...";
             btn.disabled = true;
 
@@ -182,7 +183,7 @@
                 .from('thi_sinh')
                 .select('*')
                 .eq('ngay_thi', ngayThi)
-                .eq('cccd', cccd)
+                .eq('sbd', sbd)
                 .maybeSingle();
 
             btn.innerText = "🔍 Kiểm Tra Ngay";
@@ -212,6 +213,7 @@
             // Điền thông tin text
             document.getElementById('resName').innerText = data.ho_ten;
             document.getElementById('resSBD').innerText = data.sbd;
+			document.getElementById('resBoD').innerText = data.ngay_sinh;
             document.getElementById('resDate').innerText = formatDate(data.ngay_thi);
             document.getElementById('resTotal').innerText = formatMoney(tongTien);
             document.getElementById('resPaid').innerText = formatMoney(daNop);
@@ -233,9 +235,9 @@
                 statusArea.innerHTML = `
                     <div class="status-box pending">
                         <h3>⚠️ CÒN THIẾU: <span style="color:red">${formatMoney(conThieu)}</span></h3>
+						<p class="note">Mở app ngân hàng quét mã bên dưới.<br>Hệ thống sẽ tự động xác nhận ngay sau khi chuyển khoản.</p>
                         <img src="${qrLink}" class="qr-img" />
-                        <p>Nội dung CK: <strong>${code}</strong></p>
-                        <p class="note">Mở app ngân hàng quét mã trên. Hệ thống sẽ tự động xác nhận ngay sau khi chuyển khoản.</p>
+                        <p>Mã thanh toán: <strong>${code}</strong></p>
                     </div>
                 `;
             }
@@ -278,7 +280,6 @@
 		setTimeout(()=> {
 			document.getElementById('second').style.display = 'block';
 			document.getElementById('first').style.display = 'none';
-			console.log("update");
 		},3000);
     </script>
 </body>
