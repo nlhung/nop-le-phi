@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tra cứu lệ phí thi - Trung tâm đào tạo và sát hạch lái xe Minh Khang</title>
+    <title>Nộp lệ phí thi - Trung tâm Minh Khang</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* === CSS CƠ BẢN === */
@@ -117,12 +117,12 @@
     <div id="resultModal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
-                <h3>Kết Quả Tra Cứu</h3>
+                <h3>Thông tin</h3>
                 <span class="close-btn" onclick="dongModal()">&times;</span>
             </div>
             <div class="modal-body">
 				<div class="info-row"><span>Ngày thi:</span> <span class="highlight" id="resDate">...</span></div>
-				<div class="info-row"><span>SBD:</span> <span class="highlight" id="resSBD">...</span></div>
+				<div class="info-row"><span>Số báo danh:</span> <span class="highlight" id="resSBD">...</span></div>
 				<div class="info-row"><span>Họ tên:</span> <span class="highlight" id="resName">...</span></div>
 				<div class="info-row"><span>Ngày sinh:</span> <span class="highlight" id="resBoD">...</span></div>
                 <div class="info-row"><span>Tổng lệ phí:</span> <span class="highlight" id="resTotal">...</span></div>
@@ -216,8 +216,8 @@
 			document.getElementById('resBoD').innerText = data.ngay_sinh;
             document.getElementById('resDate').innerText = formatDate(data.ngay_thi);
             document.getElementById('resTotal').innerText = formatMoney(tongTien);
-            document.getElementById('resPaid').innerText = formatMoney(daNop);
-
+			document.getElementById('resPaid').innerText = formatMoney(daNop);
+			
             const statusArea = document.getElementById('statusArea');
 
             if (conThieu <= 0) {
@@ -232,14 +232,13 @@
                 // Thiếu tiền
                 const qrLink = `https://api.vietqr.io/image/${TEN_NGAN_HANG}-${STK_NGAN_HANG}-vTPpigL.jpg?amount=${conThieu}&addInfo=${code}`;
 
-                statusArea.innerHTML = `
-                    <div class="status-box pending">
-                        <h3>⚠️ CÒN THIẾU: <span style="color:red">${formatMoney(conThieu)}</span></h3>
+				statusArea.innerHTML = `
+					<div class="status-box pending">
 						<p class="note">Mở app ngân hàng quét mã bên dưới.<br>Hệ thống sẽ tự động xác nhận ngay sau khi chuyển khoản.</p>
-                        <img src="${qrLink}" class="qr-img" />
-                        <p>Mã thanh toán: <strong>${code}</strong></p>
-                    </div>
-                `;
+						<img src="${qrLink}" class="qr-img" />
+						<p>Mã thanh toán: <strong>${code}</strong></p>
+					</div>
+				`;
             }
         }
 
