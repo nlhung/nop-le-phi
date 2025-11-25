@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nộp lệ phí thi - Trung tâm Minh Khang</title>
+    <title>NỘP LỆ PHÍ Ô TÔ - TRUNG TÂM MINH KHANG</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* === CSS CƠ BẢN === */
@@ -77,7 +77,7 @@
 <body>
 	<div id="first" class="welcome">
 		<h1>
-			🏛️ NỘP LỆ PHÍ THI TỰ ĐỘNG
+			HỆ THỐNG NỘP LỆ PHÍ Ô TÔ
 			<br><br><br>
 			<span style="color:red;">TRUNG TÂM ĐÀO TẠO VÀ SÁT HẠCH LÁI XE MINH KHANG</span>
 		</h1>
@@ -94,19 +94,19 @@
 	
     <div id="second" class="search-card">
 		<img src="minhkhang.jpg" style="width:100%"/>
-        <h2>🏛️ NỘP LỆ PHÍ THI TỰ ĐỘNG</h2>
+        <h2 style="text-align: center">NỘP LỆ PHÍ Ô TÔ<br>TRUNG TÂM MINH KHANG</h2>
         
 		<p style="text-align: left">
-			<i>- Học viên vui lòng chọn <u>ngày thi</u> và nhập <u>số báo danh</u>.<br>
-			- Sau đó nhấn <u>kiểm tra</u> để kiểm tra lệ phí thi.</i>
+			<i>- Học viên vui nhập <u>số báo danh</u>.<br>
+			- Sau đó nhấn <u>kiểm tra</u> để kiểm tra và nộp lệ phí thi.</i>
 		</p>
 		
-        <label>Ngày thi:</label>
-        <select id="ngayThi">
-            <option value="">-- Chọn ngày thi --</option>
-            <option value="2025-11-27">Ngày 27/11/2025</option>
-            <option value="2025-11-30">Ngày 30/11/2025</option>
-        </select>
+        <!-- <label>Ngày thi:</label> -->
+        <!-- <select id="ngayThi"> -->
+            <!-- <option value="">-- Chọn ngày thi --</option> -->
+            <!-- <option value="2025-11-27">Ngày 27/11/2025</option> -->
+            <!-- <option value="2025-11-30">Ngày 30/11/2025</option> -->
+        <!-- </select> -->
 
         <label>Số báo danh:</label>
         <input type="number" id="sbd" placeholder="Nhập số báo danh">
@@ -137,7 +137,8 @@
         // --- CẤU HÌNH ---
         const SUPABASE_URL = 'https://ncanageaezhbvruuylsr.supabase.co'; // Thay URL
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jYW5hZ2VhZXpoYnZydXV5bHNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MjY5MjQsImV4cCI6MjA3OTIwMjkyNH0.V4OHDspHDsB1preYgWnbET7YAGl9NinQ7JK_Vn3wBkg'; // Thay KEY
-        const STK_NGAN_HANG = '9390388633';     
+        <!-- const STK_NGAN_HANG = '9390388633'; -->
+		const STK_NGAN_HANG = '0345678196';     
         const TEN_NGAN_HANG = 'vpbank'; 
         // ----------------
 
@@ -167,13 +168,13 @@
 		}
 
         async function traCuu() {
-            const ngayThi = document.getElementById('ngayThi').value;
+            <!-- const ngayThi = document.getElementById('ngayThi').value; -->
             const sbd = document.getElementById('sbd').value.trim().replace(/^0+/, '');
 			//const sbd = document.getElementById('sbd').value.trim().padStart(5,"0");
 
             const btn = document.getElementById('btnSearch');
 
-            if(!ngayThi || !sbd) return alert("Vui lòng nhập đủ thông tin!");
+            if(!sbd) return alert("Vui lòng nhập số báo danh!");
 			
             btn.innerText = "Đang tìm...";
             btn.disabled = true;
@@ -182,7 +183,7 @@
             const { data, error } = await supabase
                 .from('thi_sinh')
                 .select('*')
-                .eq('ngay_thi', ngayThi)
+				.eq('is_car',true)
                 .eq('sbd', sbd)
                 .maybeSingle();
 
@@ -199,7 +200,7 @@
                 // Kiểm tra nếu còn thiếu tiền thì lắng nghe
                 const conThieu = data.so_tien - (data.da_nop || 0);
                 if (conThieu > 0) {
-                    langNgheThanhToan(data.sbd);
+                    langNgheThanhToan(data.code);
                 }
             }
         }
@@ -242,20 +243,20 @@
             }
         }
 
-        function langNgheThanhToan(sbd) {
+        function langNgheThanhToan(code) {
             // Hủy kênh cũ trước khi tạo kênh mới (để an toàn)
             if (currentChannel) supabase.removeChannel(currentChannel);
 
-            console.log("Bắt đầu lắng nghe:", sbd);
+            console.log("Bắt đầu lắng nghe:", code);
             const channel = supabase
-                .channel(`realtime_${sbd}`)
+                .channel(`realtime_${code}`)
                 .on(
                     'postgres_changes',
                     {
                         event: 'UPDATE',
                         schema: 'public',
                         table: 'thi_sinh',
-                        filter: `sbd=eq.${sbd}`
+                        filter: `code=eq.${code}`
                     },
                     (payload) => {
                         console.log("Có update:", payload.new);
